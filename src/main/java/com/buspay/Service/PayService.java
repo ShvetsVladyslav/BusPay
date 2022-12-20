@@ -6,9 +6,9 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.RequestParam;
 
+import java.util.Objects;
+import java.util.Random;
 
 @Service
 public class PayService {
@@ -16,20 +16,39 @@ public class PayService {
     @Autowired
     PaysRepository paysRepository;
     public boolean paymentCreate(PayData payment){
-        try{
-            paysRepository.save(payment);
-            return true;
+        Random randomizer = new Random();
+        switch (randomizer.nextInt(6) + 1){
+            case 1, 2, 3:
+                payment.setState("NEW");
+                break;
+            case 4, 5:
+                payment.setState("DONE");
+                break;
+            case 6:
+                payment.setState("FAIL");
+                break;
         }
-        catch (Exception exception){
+        if (!Objects.equals(payment.getState(), "FAIL")) {
+            try {
+
+                paysRepository.save(payment);
+                return true;
+            } catch (Exception exception) {
+                return false;
+            }
+        }
+        else {
             return false;
         }
     }
     public PayData getPayment(String id){
+        PayData response;
         if (paysRepository.findById(id).isPresent()) {
-            return paysRepository.findById(id).get();
+            response =  paysRepository.findById(id).get();
         }
         else {
-            return null;
+            response = null;
         }
+        return response;
     }
 }

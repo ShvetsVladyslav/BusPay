@@ -17,6 +17,8 @@ public class PayData {
     private String fullName;
     @Field(name = "price")
     private float price;
+    @Field(name = "state")
+    private String state;
     public PayData() {
     }
     public PayData(String fullName, float price) {
