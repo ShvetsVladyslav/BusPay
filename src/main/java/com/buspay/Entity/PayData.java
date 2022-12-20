@@ -8,7 +8,7 @@ import org.springframework.data.mongodb.core.mapping.Field;
 import org.springframework.data.mongodb.core.mapping.MongoId;
 @Getter
 @Setter
-@Document(collation = "Pays")
+@Document(collection = "Pays")
 public class PayData {
     @MongoId
     @Indexed(unique = true)

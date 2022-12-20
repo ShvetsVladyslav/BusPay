@@ -7,7 +7,7 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import java.util.Objects;
+import java.util.List;
 import java.util.Random;
 
 @Service
@@ -17,27 +17,17 @@ public class PayService {
     PaysRepository paysRepository;
     public boolean paymentCreate(PayData payment){
         Random randomizer = new Random();
-        switch (randomizer.nextInt(6) + 1){
-            case 1, 2, 3:
-                payment.setState("NEW");
-                break;
-            case 4, 5:
-                payment.setState("DONE");
-                break;
-            case 6:
-                payment.setState("FAIL");
-                break;
+        switch (randomizer.nextInt(6) + 1) {
+            case 1, 2 -> payment.setState("NEW");
+            case 3, 4, 5 -> payment.setState("DONE");
+            case 6 -> payment.setState("FAIL");
         }
-        if (!Objects.equals(payment.getState(), "FAIL")) {
-            try {
+        try {
 
-                paysRepository.save(payment);
-                return true;
-            } catch (Exception exception) {
-                return false;
-            }
-        }
-        else {
+            paysRepository.save(payment);
+            return true;
+        } catch (Exception exception) {
+            logger.error(exception.getMessage());
             return false;
         }
     }
@@ -50,5 +40,8 @@ public class PayService {
             response = null;
         }
         return response;
+    }
+    public void paymentCheck() {
+        List<PayData> payQ = paysRepository.findByState("NEW");
     }
 }
