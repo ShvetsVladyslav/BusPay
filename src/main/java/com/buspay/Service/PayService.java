@@ -16,12 +16,7 @@ public class PayService {
     @Autowired
     PaysRepository paysRepository;
     public boolean paymentCreate(PayData payment){
-        Random randomizer = new Random();
-        switch (randomizer.nextInt(6) + 1) {
-            case 1, 2 -> payment.setState("NEW");
-            case 3, 4, 5 -> payment.setState("DONE");
-            case 6 -> payment.setState("FAIL");
-        }
+
         try {
             paysRepository.save(payment);
             return true;
@@ -34,6 +29,12 @@ public class PayService {
         PayData response;
         if (paysRepository.findById(id).isPresent()) {
             response =  paysRepository.findById(id).get();
+            Random randomizer = new Random();
+            switch (randomizer.nextInt(6) + 1) {
+                case 1, 2 -> response.setState("NEW");
+                case 3, 4, 5 -> response.setState("DONE");
+                case 6 -> response.setState("FAIL");
+            }
         }
         else {
             response = null;
