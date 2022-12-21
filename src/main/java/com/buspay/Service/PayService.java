@@ -5,6 +5,7 @@ import com.buspay.Repository.PaysRepository;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -35,13 +36,23 @@ public class PayService {
                 case 3, 4, 5 -> response.setState("DONE");
                 case 6 -> response.setState("FAIL");
             }
+            paysRepository.save(response);
         }
         else {
             response = null;
         }
         return response;
     }
-    public void paymentCheck() {
+    @Scheduled(fixedDelay = 10000)
+    public void paymentCheck() throws InterruptedException {
+        logger.info("Scheduled Job Start");
         List<PayData> payQ = paysRepository.findByState("NEW");
+        logger.info("Count of payment to check: " + payQ.size());
+        for (PayData payment:payQ) {
+            logger.info("Payment id: " + payment.getId() + "\n" + "Payment state before: " + payment.getState());
+            this.getPayment(payment.getId());
+            logger.info("Payment id: " + payment.getId() + "\n" + "Payment state after: " + paysRepository.findById(payment.getId()).get().getState());
+        }
+        Thread.sleep(5000);
     }
 }
