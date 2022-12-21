@@ -23,7 +23,6 @@ public class PayService {
             case 6 -> payment.setState("FAIL");
         }
         try {
-
             paysRepository.save(payment);
             return true;
         } catch (Exception exception) {
